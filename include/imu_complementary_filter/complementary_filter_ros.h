@@ -94,6 +94,8 @@ class ComplementaryFilterROS
     std::string frame_id_;
     double orientation_variance_;
 
+    boost::array<double, 9ul> orient_cov_matrix_;
+
     // State variables:
     ComplementaryFilter filter_;
     ros::Time time_prev_;
@@ -107,8 +109,7 @@ class ComplementaryFilterROS
                           const ImuMsg::ConstPtr& gyr_msg);
     void publish(const ImuMsg::ConstPtr& imu_msg_raw);
 
-    tf::Quaternion hamiltonToTFQuaternion(
-        double q0, double q1, double q2, double q3) const;
+    tf::Quaternion hamiltonToTFQuaternion(double q0, double q1, double q2, double q3) const;
 };
 
 }  // namespace imu_tools

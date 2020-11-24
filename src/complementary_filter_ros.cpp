@@ -46,7 +46,7 @@ ComplementaryFilterROS::ComplementaryFilterROS(const ros::NodeHandle& nh, const 
 
 {
 
-  ROS_INFO("Starting ComplementaryFilterROS");
+  ROS_INFO("Startingads ComplementaryFilterROS");
   initializeParams();
 
   int queue_size = 5;
@@ -260,6 +260,14 @@ void ComplementaryFilterROS::imuSplitCallback(const ImuMsg::ConstPtr& acc_msg,
   const geometry_msgs::Vector3& a = imu_msg_raw->linear_acceleration;
   const geometry_msgs::Vector3& w = imu_msg_raw->angular_velocity;
   const ros::Time& time = imu_msg_raw->header.stamp;
+  
+  for (int i=0; i<9; i++)
+  {
+    orient_cov_matrix_[i] = sqrt(imu_msg_raw->linear_acceleration_covariance[i]*
+                                 imu_msg_raw->linear_acceleration_covariance[i] + 
+                                 imu_msg_raw->angular_velocity_covariance[i]*
+                                 imu_msg_raw->angular_velocity_covariance[i]);
+  }
 
   // Initialize
   if (!initialized_filter_)
@@ -309,7 +317,9 @@ void ComplementaryFilterROS::publish(
   {
     imu_msg->header.frame_id = frame_id_;
   }
-
+  
+  if (orientation_variance_ != 0.0)
+  {
   imu_msg->orientation_covariance[0] = orientation_variance_;
   imu_msg->orientation_covariance[1] = 0.0;
   imu_msg->orientation_covariance[2] = 0.0;
@@ -319,7 +329,12 @@ void ComplementaryFilterROS::publish(
   imu_msg->orientation_covariance[6] = 0.0;
   imu_msg->orientation_covariance[7] = 0.0;
   imu_msg->orientation_covariance[8] = orientation_variance_;
-
+  }
+  else
+  {
+    imu_msg->orientation_covariance = orient_cov_matrix_;
+  }
+  
   // Account for biases.
   if (filter_.getDoBiasEstimation())
   {
