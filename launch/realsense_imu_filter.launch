@@ -1,0 +1,32 @@
+<launch>
+
+  <node pkg="imu_complementary_filter"
+        type="complementary_filter_node"
+        name="realsense_imu_filter_node"
+        args = ""
+        output="screen">
+
+    <param name="fixed_frame"          value="odom"/>
+    <param name="frame_id"             value="imu_link"/>
+    <param name="use_mag"              value="false"/>
+    <param name="use_split"            value="true"/>
+    <param name="publish_tf"           value="false"/>
+    <param name="reverse_tf"           value="false"/>
+    <param name="constant_dt"          value="0.0"/>
+    <param name="publish_debug_topics" value="false"/>
+    <param name="gain_acc"             value="0.01"/>
+    <param name="gain_mag"             value="0.01"/>
+    <param name="do_bias_estimation"   value="true"/>
+    <param name="bias_alpha"           value="0.01"/>
+    <param name="do_adaptive_gain"     value="true"/>
+    <param name="orientation_stddev"   value="0.0"/>
+
+    <remap from="/imu/data_raw"        to="/imu/data_raw"/>
+    <remap from="/imu/mag"             to="/imu/mag"/>
+    <remap from="/imu/accel"           to="/d435i/accel/sample"/>
+    <remap from="/imu/gyro"            to="/d435i/gyro/sample"/>
+    <remap from="/imu/data"            to="/d435i/imu/sample"/>
+
+  </node>
+
+</launch>
