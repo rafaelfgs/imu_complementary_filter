@@ -86,6 +86,8 @@ class ComplementaryFilterROS
     // Parameters:
     bool use_mag_;
     bool use_split_;
+    bool use_diff_orient_;
+    bool use_inv_orient_;
     bool publish_tf_;
     bool reverse_tf_;
     double constant_dt_;

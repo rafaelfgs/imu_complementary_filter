@@ -7,9 +7,11 @@
         output="screen">
 
     <param name="fixed_frame"          value="odom"/>
-    <param name="frame_id"             value="imu_link"/>
+    <param name="frame_id"             value="d435i_imu_frame"/>
     <param name="use_mag"              value="false"/>
     <param name="use_split"            value="true"/>
+    <param name="use_diff_orient"      value="false"/>
+    <param name="use_inv_orient"       value="true"/>
     <param name="publish_tf"           value="false"/>
     <param name="reverse_tf"           value="false"/>
     <param name="constant_dt"          value="0.0"/>

@@ -46,7 +46,7 @@ ComplementaryFilterROS::ComplementaryFilterROS(const ros::NodeHandle& nh, const 
 
 {
 
-  ROS_INFO("Startingads ComplementaryFilterROS");
+  ROS_INFO("Starting ComplementaryFilterROS");
   initializeParams();
 
   int queue_size = 5;
@@ -116,6 +116,10 @@ void ComplementaryFilterROS::initializeParams()
     use_mag_ = false;
   if (!nh_private_.getParam ("use_split", use_split_))
     use_split_ = false;
+  if (!nh_private_.getParam ("use_diff_orient", use_diff_orient_))
+    use_diff_orient_ = false;
+  if (!nh_private_.getParam ("use_inv_orient", use_inv_orient_))
+    use_inv_orient_ = false;
   if (!nh_private_.getParam ("publish_tf", publish_tf_))
     publish_tf_ = false;
   if (!nh_private_.getParam ("reverse_tf", reverse_tf_))
@@ -242,14 +246,22 @@ void ComplementaryFilterROS::imuSplitCallback(const ImuMsg::ConstPtr& acc_msg,
   geometry_msgs::Vector3 la = acc_msg->linear_acceleration;
   boost::array<double, 9ul> lac = acc_msg->linear_acceleration_covariance;
   
-  // Fix wrong orientation (w.x, w.y and a.z)
-  if (la.z < 0)
+  // Change the realsense's default orientation
+  if (use_diff_orient_)
+  {
+    av.x = +gyr_msg->angular_velocity.z;
+    av.y = -gyr_msg->angular_velocity.x;
+    av.z = -gyr_msg->angular_velocity.y;
+    la.x = +acc_msg->linear_acceleration.z;
+    la.y = -acc_msg->linear_acceleration.x;
+    la.z = -acc_msg->linear_acceleration.y;
+  }
+  if (use_inv_orient_)
   {
     av.x = -av.x;
     av.y = -av.y;
     la.z = -la.z;
   }
-  
   // Build IMU raw data
   ImuMsg::ConstPtr imu_msg_raw = gyr_msg;
   *(geometry_msgs::Vector3*)(&(imu_msg_raw->angular_velocity)) = av;
