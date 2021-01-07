@@ -118,8 +118,6 @@ void ComplementaryFilterROS::initializeParams()
     use_split_ = false;
   if (!nh_private_.getParam ("use_diff_orient", use_diff_orient_))
     use_diff_orient_ = false;
-  if (!nh_private_.getParam ("use_inv_orient", use_inv_orient_))
-    use_inv_orient_ = false;
   if (!nh_private_.getParam ("publish_tf", publish_tf_))
     publish_tf_ = false;
   if (!nh_private_.getParam ("reverse_tf", reverse_tf_))
@@ -256,12 +254,7 @@ void ComplementaryFilterROS::imuSplitCallback(const ImuMsg::ConstPtr& acc_msg,
     la.y = -acc_msg->linear_acceleration.x;
     la.z = -acc_msg->linear_acceleration.y;
   }
-  if (use_inv_orient_)
-  {
-    av.x = -av.x;
-    av.y = -av.y;
-    la.z = -la.z;
-  }
+  
   // Build IMU raw data
   ImuMsg::ConstPtr imu_msg_raw = gyr_msg;
   *(geometry_msgs::Vector3*)(&(imu_msg_raw->angular_velocity)) = av;
